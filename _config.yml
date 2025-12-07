@@ -7,3 +7,21 @@ plugins:
 relative_links:
   enabled: true
   collections: true
+
+# GitHub Pages configuration
+baseurl: "/tldr-hacknews-24" # This should match your repository name
+url: "https://krabswang.github.io"
+
+# Collections configuration
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
+
+# Defaults for posts
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post

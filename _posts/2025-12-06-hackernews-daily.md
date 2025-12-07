@@ -1,6 +1,8 @@
+---
 layout: post
 title: "2025-12-06"
 date: 2025-12-06
+---
 
 # HackerNews Daily - 2025-12-06
 
