@@ -16,7 +16,7 @@ url: "https://krabswang.github.io"
 collections:
   posts:
     output: true
-    permalink: /:year/:month/:day/:title/
+    permalink: "/tldr-hacknews-24/:year/:month/:day/:title/"
 
 # Defaults for posts
 defaults:
