@@ -10,13 +10,13 @@ relative_links:
 
 # GitHub Pages configuration
 baseurl: "/tldr-hacknews-24" # This should match your repository name
-url: "https://krabswang.github.io"
+url: "https://krabswong.github.io"
 
 # Collections configuration
 collections:
   posts:
     output: true
-    permalink: "/tldr-hacknews-24/:year/:month/:day/:title/"
+    permalink: "/tldr-hacknews-24/:year/:month/:day/"
 
 # Defaults for posts
 defaults:
