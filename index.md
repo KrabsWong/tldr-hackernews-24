@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "TLDR.HackNews24"
+title: "TL;DR.HackerNews24"
 permalink: "/"
 ---
 

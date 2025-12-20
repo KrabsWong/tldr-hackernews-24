@@ -1,4 +1,4 @@
-title: TLDR.HackNews24
+title: TL;DR.HackerNews24
 description: Read it 1000 years later bro.
 theme: jekyll-theme-minimal
 markdown: kramdown
@@ -9,7 +9,7 @@ relative_links:
   collections: true
 
 # GitHub Pages configuration
-baseurl: "/tldr-hacknews-24" # This should match your repository name
+baseurl: "/tldr-hackernews-24" # This should match your repository name
 url: "https://krabswong.github.io"
 
 # Permalink configuration for posts
