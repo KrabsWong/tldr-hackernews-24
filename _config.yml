@@ -15,6 +15,9 @@ url: "https://krabswong.github.io"
 # Permalink configuration for posts
 permalink: /:year/:month/:day/:title/
 
+# Google Analytics
+google_analytics: G-NVV6SYBRDW
+
 # Defaults for posts
 defaults:
   - scope:
