@@ -11,19 +11,20 @@ This creates a poor mobile UX where users must manually scroll long distances to
 - Add a "Back to Top" button in the bottom-right corner on both PC and mobile
   - Button is always visible regardless of scroll position
   - Clicking scrolls smoothly to the page top
-  - Fixed positioning with appropriate spacing (20-30px from edges)
+  - Fixed positioning (20px from edges)
+  - Subtle styling with border, matches hamburger menu button size (36px)
   
-- Add dot navigation on mobile devices
-  - Replace full TOC list with small circular dot indicators
-  - Display as a floating element on the right side of the screen
-  - Each dot represents one article (h2 heading)
-  - Active dot highlights the currently visible article
-  - Clicking a dot scrolls to the corresponding article
-  - Space-efficient design suitable for mobile screens
+- Add hamburger menu with slide-out drawer on mobile devices
+  - Small hamburger button (36px) fixed in bottom-right corner, above back-to-top button
+  - Clicking opens a slide-out drawer panel from the right side
+  - Drawer contains full TOC with same styling as desktop (rounded corners, hover effects)
+  - Active state highlights the currently visible article
+  - Clicking a link scrolls to the corresponding article and closes drawer
+  - Overlay background closes drawer when clicked
+  - ESC key closes drawer
 
 ## Impact
 - Affected specs: New spec `post-page-navigation`
 - Affected code:
-  - `_layouts/post.html` - Add back-to-top button and mobile dot navigation
+  - `_layouts/post.html` - Add back-to-top button, hamburger menu, and mobile drawer
   - `assets/css/components.css` - Add styles for navigation elements
-  - Potentially new JS file for navigation behavior

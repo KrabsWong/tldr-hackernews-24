@@ -9,13 +9,14 @@ The post page currently has a table of contents (TOC) that works well on desktop
 
 ### Goals
 - Add a universal back-to-top button for both desktop and mobile
-- Provide space-efficient navigation on mobile through dot indicators
+- Provide full TOC access on mobile through hamburger menu + slide-out drawer
 - Maintain smooth scrolling and active state tracking
+- Ensure consistent styling between desktop TOC and mobile drawer
 - Ensure no visual conflicts with existing layout elements
 
 ### Non-Goals
 - Changing the desktop TOC implementation (keep as-is)
-- Adding complex animations or transitions beyond smooth scrolling
+- Adding complex animations beyond smooth scrolling and drawer slide
 - Supporting keyboard-only navigation (focus on touch/click for now)
 
 ## Decisions
@@ -29,41 +30,48 @@ The post page currently has a table of contents (TOC) that works well on desktop
 - User explicitly requested "always visible"
 
 **Alternatives considered**:
-- Show only after scrolling 300-500px: More traditional pattern, but adds complexity and the button is small enough to not be intrusive when always visible
+- Show only after scrolling 300-500px: More traditional pattern, but adds complexity
 
-### Decision 2: Mobile Dot Navigation Position
-**Choice**: Vertical stack of dots on the right side, positioned using `position: fixed`
+### Decision 2: Hamburger Menu with Slide-out Drawer
+**Choice**: Hamburger button that opens a slide-out drawer panel from the right side
 **Rationale**:
-- Right-side positioning is conventional and expected by users
-- Fixed positioning ensures always visible during scroll
-- Vertical stack accommodates variable number of articles
-- Small dot size (8-12px) minimizes screen real estate usage
+- Provides full TOC functionality identical to desktop
+- Familiar pattern that users understand
+- Drawer panel has enough space for all navigation items with proper styling
+- User explicitly chose this over dot navigation
 
 **Alternatives considered**:
+- Dot navigation: Too ugly according to user feedback, difficult to tap accurately
 - Bottom tab bar: Takes more space, conflicts with browser UI
-- Hamburger menu with drawer: Requires extra click, less discoverable
 
-### Decision 3: Dot Navigation Implementation
-**Choice**: Reuse existing outline generation logic, render differently based on screen size
+### Decision 3: Button Styling - Subtle and Unified
+**Choice**: Both buttons use subtle styling (36px, bg-secondary background, border, no solid accent color)
 **Rationale**:
-- Leverages existing heading detection and ID generation
-- Single source of truth for article structure
-- CSS media queries handle display switching (TOC on desktop, dots on mobile)
-- JavaScript manages both TOC links and dot clicks with shared scroll logic
+- Consistent sizing between hamburger and back-to-top buttons
+- Subtle appearance doesn't distract from content
+- Accent color only appears on hover for visual feedback
+- User explicitly requested smaller, less prominent buttons
 
-### Decision 4: Active State Tracking
-**Choice**: Use scroll event listener to update active dot/link based on viewport position
+### Decision 4: Mobile Drawer Styling - Match Desktop TOC
+**Choice**: Drawer links use same styling as desktop TOC (rounded corners, border-left accent, hover effects)
+**Rationale**:
+- Visual consistency across platforms
+- Users have same experience regardless of device
+- User explicitly requested this consistency
+
+### Decision 5: Active State Tracking
+**Choice**: Use scroll event listener to update active link based on viewport position
 **Rationale**:
 - Already implemented for existing TOC
 - Provides visual feedback of current position
-- Reuse existing logic for both desktop TOC and mobile dots
+- Reuse existing logic for both desktop TOC and mobile drawer
 
-### Decision 5: Desktop vs Mobile Display
-**Choice**: Use CSS media query at 768px breakpoint to show TOC on desktop, dots on mobile
+### Decision 6: Desktop vs Mobile Display
+**Choice**: Use CSS media query at 768px breakpoint
 **Rationale**:
 - Consistent with existing responsive breakpoints in layout.css
+- Desktop shows sidebar TOC, mobile shows hamburger + drawer
 - Simple CSS toggle without JavaScript detection
-- Matches existing mobile header behavior
 
 ## Technical Approach
 
@@ -72,62 +80,62 @@ The post page currently has a table of contents (TOC) that works well on desktop
 <!-- Back to Top Button (both desktop & mobile) -->
 <button class="back-to-top" aria-label="回到顶部">↑</button>
 
-<!-- Existing desktop TOC (unchanged structure, add CSS for desktop-only) -->
-<div class="outline-wrapper">
-  <div class="outline">
-    <h3>目录</h3>
-    <ul id="outline-list"></ul>
-  </div>
-</div>
+<!-- Mobile Navigation Menu (hamburger button) -->
+<button class="mobile-menu-toggle" aria-label="打开目录菜单" aria-expanded="false">
+  <span class="hamburger-icon"></span>
+</button>
 
-<!-- New mobile dot navigation -->
-<nav class="mobile-dot-nav" aria-label="文章导航">
-  <ul id="dot-nav-list"></ul>
-</nav>
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-nav-drawer" aria-hidden="true">
+  <div class="mobile-nav-overlay"></div>
+  <aside class="mobile-nav-panel">
+    <div class="mobile-nav-header">
+      <h3>目录</h3>
+      <button class="mobile-nav-close" aria-label="关闭目录">&times;</button>
+    </div>
+    <nav class="mobile-nav-content">
+      <ul id="mobile-nav-list"></ul>
+    </nav>
+  </aside>
+</div>
 ```
 
 ### CSS Styling Approach
-- `.back-to-top`: Fixed positioning (bottom: 24px, right: 24px), z-index: 1000
-- `.mobile-dot-nav`: Fixed positioning on right side, visible only on mobile (<768px)
-- `.outline-wrapper`: Hidden on mobile, visible on desktop
-- Dots: 10px diameter circles with 8px spacing, active state with accent color
+- `.back-to-top`: Fixed positioning (bottom: 20px, right: 20px), 36px size, z-index: 1000
+- `.mobile-menu-toggle`: Fixed positioning (bottom: 64px, right: 20px), 36px size, z-index: 1000
+- `.mobile-nav-drawer`: Full-screen overlay with slide-out panel, z-index: 1100
+- `.mobile-nav-link`: Same styling as desktop `.outline a` (rounded corners, border-left accent)
+- Touch-action CSS properties to prevent click-through issues
 
 ### JavaScript Logic Flow
 1. On page load, detect all h2 headings
 2. Generate IDs for headings (existing logic)
-3. Populate both TOC links and dot indicators
+3. Populate both desktop TOC links and mobile drawer links
 4. Attach click handlers for smooth scrolling
 5. Attach scroll listener to update active states
-6. Attach back-to-top button click handler
+6. Handle drawer open/close with proper event handling (stopImmediatePropagation)
+7. Handle touchend events to prevent click-through on mobile
 
 ### Z-Index Management
+- Mobile nav drawer: z-index: 1100
 - Back-to-top button: z-index: 1000
-- Mobile dot navigation: z-index: 999
+- Mobile menu toggle: z-index: 1000
 - Mobile header: z-index: 1000 (existing)
-- No conflicts expected as elements don't overlap
 
 ## Risks / Trade-offs
 
-### Risk: Too many articles creating too many dots
-**Impact**: On posts with 20+ h2 headings, vertical dot stack could overflow viewport
-**Mitigation**: 
-- Use `max-height` with scrollable container if needed
-- Most posts have 5-15 articles based on existing content
-- Monitor and adjust if this becomes an issue
-
-### Risk: Dots too small for touch targets on mobile
-**Impact**: Users may struggle to tap dots accurately
+### Risk: Click-through on touch devices
+**Impact**: Tapping fixed buttons may trigger elements beneath
 **Mitigation**:
-- Use 10px visible dots with 32px touch target padding
-- Add visual feedback on tap
-- Test on real devices during implementation
+- Use touchend event handlers with stopImmediatePropagation
+- Add CSS touch-action: manipulation and -webkit-tap-highlight-color: transparent
+- Tested and resolved
 
-### Risk: Conflicts with existing scroll behavior
-**Impact**: Multiple scroll handlers could cause performance issues
+### Risk: Scroll offset hiding content
+**Impact**: After scrolling to anchor, fixed header may cover content
 **Mitigation**:
-- Reuse existing scroll tracking logic
-- Throttle scroll events if performance issues arise
-- Use passive event listeners for better performance
+- Use scroll-margin-top CSS property on target elements
+- Set appropriate values (80px on mobile) to account for fixed header
 
 ## Migration Plan
 No migration needed - this is purely additive functionality. No existing behavior changes.

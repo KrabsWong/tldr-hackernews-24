@@ -12,9 +12,10 @@ The post page MUST provide a back-to-top button that allows users to quickly scr
 
 #### Scenario: Button positioned correctly
 - **WHEN** a user views a post page on any device
-- **THEN** the button MUST be positioned 20-30px from the right edge
-- **AND** the button MUST be positioned 20-30px from the bottom edge
+- **THEN** the button MUST be positioned 20px from the right edge
+- **AND** the button MUST be positioned 20px from the bottom edge
 - **AND** the button MUST use fixed positioning to stay in view while scrolling
+- **AND** the button MUST be 36px in diameter
 
 #### Scenario: Clicking button scrolls to top
 - **WHEN** a user clicks the back-to-top button
@@ -23,73 +24,91 @@ The post page MUST provide a back-to-top button that allows users to quickly scr
 
 #### Scenario: Button has appropriate styling
 - **WHEN** the back-to-top button is displayed
-- **THEN** it MUST be clearly visible with sufficient contrast against the background
-- **AND** it MUST show a hover state when the user hovers over it
-- **AND** it MUST have an accessible label (aria-label or text content)
+- **THEN** it MUST have subtle styling (bg-secondary background, border)
+- **AND** it MUST show a hover state with accent color when the user hovers over it
+- **AND** it MUST have an accessible label (aria-label: "回到顶部")
 
-### Requirement: Mobile Dot Navigation
-The post page MUST provide a dot-based navigation system on mobile devices that allows quick navigation between articles while conserving screen space.
+### Requirement: Mobile Hamburger Menu
+The post page MUST provide a hamburger menu button on mobile devices that opens a slide-out drawer containing the table of contents.
 
-#### Scenario: Dot navigation visible only on mobile
+#### Scenario: Hamburger button visible only on mobile
 - **WHEN** a user views a post page on a device with viewport width < 768px
-- **THEN** a dot navigation MUST be visible on the right side of the screen
-- **AND** the traditional TOC list MUST be hidden
-- **AND** when viewport width >= 768px
-- **THEN** the traditional TOC list MUST be visible
-- **AND** the dot navigation MUST be hidden
+- **THEN** a hamburger menu button MUST be visible in the bottom-right corner
+- **AND** the button MUST be positioned above the back-to-top button (bottom: 64px)
+- **WHEN** viewport width >= 768px
+- **THEN** the hamburger menu button MUST be hidden
+- **AND** the traditional sidebar TOC MUST be visible
 
-#### Scenario: Dot represents each article
-- **WHEN** a post page has multiple h2 headings (articles)
-- **THEN** each h2 heading MUST be represented by one circular dot
-- **AND** dots MUST be arranged vertically in document order
-- **AND** dots MUST be approximately 10px in diameter with 8px spacing between them
+#### Scenario: Hamburger button has correct styling
+- **WHEN** the hamburger button is displayed on mobile
+- **THEN** it MUST be 36px in diameter (matching back-to-top button)
+- **AND** it MUST have subtle styling (bg-secondary background, border)
+- **AND** it MUST display a hamburger icon (three horizontal lines)
+- **AND** it MUST show a hover state with accent color
 
-#### Scenario: Active dot indicates current position
-- **WHEN** a user scrolls through the post
-- **THEN** the dot corresponding to the currently visible article MUST be highlighted
-- **AND** the active dot MUST use the accent color
-- **AND** inactive dots MUST use a muted secondary color
-- **AND** the active state MUST update automatically as the user scrolls
+### Requirement: Mobile Slide-out Drawer
+The post page MUST provide a slide-out drawer panel on mobile that contains the full table of contents.
 
-#### Scenario: Clicking dot navigates to article
-- **WHEN** a user taps on a dot in the navigation
-- **THEN** the page MUST smoothly scroll to the corresponding article
-- **AND** the dot MUST become active after navigation completes
-- **AND** the scroll behavior MUST be smooth
+#### Scenario: Drawer opens from right side
+- **WHEN** a user taps the hamburger menu button
+- **THEN** a drawer panel MUST slide in from the right side of the screen
+- **AND** an overlay MUST appear covering the rest of the page
+- **AND** body scroll MUST be disabled while drawer is open
 
-#### Scenario: Dot navigation positioned correctly on mobile
-- **WHEN** the dot navigation is displayed on mobile
-- **THEN** it MUST be positioned on the right side of the screen
-- **AND** it MUST use fixed positioning to remain visible during scroll
-- **AND** it MUST be vertically centered or positioned near the middle of the viewport
-- **AND** it MUST have sufficient spacing from the screen edge (8-12px)
+#### Scenario: Drawer contains full TOC
+- **WHEN** the drawer is open
+- **THEN** it MUST display a header with "目录" title and close button
+- **AND** it MUST display all h2 headings as navigation links
+- **AND** the links MUST have the same styling as desktop TOC (rounded corners, border-left accent on active)
 
-#### Scenario: Dots have adequate touch targets
-- **WHEN** a user interacts with dot navigation on mobile
-- **THEN** each dot MUST have a touch target of at least 32px x 32px
-- **AND** the visible dot MUST be centered within the touch target area
-- **AND** dots MUST provide visual feedback when tapped
+#### Scenario: Drawer link navigation
+- **WHEN** a user taps a link in the drawer
+- **THEN** the drawer MUST close
+- **AND** the page MUST smoothly scroll to the corresponding article
+- **AND** the scroll MUST account for fixed header (scroll-margin-top: 80px)
+
+#### Scenario: Drawer closing methods
+- **WHEN** the drawer is open
+- **THEN** tapping the overlay MUST close the drawer
+- **AND** tapping the close button MUST close the drawer
+- **AND** pressing ESC key MUST close the drawer
+
+#### Scenario: Active state in drawer
+- **WHEN** a user scrolls through the post (with drawer closed or open)
+- **THEN** the link corresponding to the currently visible article MUST be highlighted
+- **AND** the active link MUST use accent color and border-left indicator
+- **AND** the active state MUST match the desktop TOC styling
 
 ### Requirement: Navigation Accessibility
 The scroll navigation features MUST be accessible to users with assistive technologies.
 
 #### Scenario: Back to top button has accessible label
 - **WHEN** a screen reader user encounters the back-to-top button
-- **THEN** the button MUST have an aria-label or visible text indicating its purpose
-- **AND** the label MUST be in the page's primary language (e.g., "回到顶部" for Chinese)
+- **THEN** the button MUST have aria-label="回到顶部"
 
-#### Scenario: Dot navigation has accessible structure
-- **WHEN** the dot navigation is rendered
-- **THEN** it MUST be wrapped in a `<nav>` element with an aria-label
-- **AND** dots MUST be rendered as a list structure (ul/li)
-- **AND** each dot MUST be a focusable element (button or link)
+#### Scenario: Hamburger button has accessible attributes
+- **WHEN** the hamburger button is rendered
+- **THEN** it MUST have aria-label="打开目录菜单"
+- **AND** it MUST have aria-expanded attribute indicating drawer state
 
-#### Scenario: Navigation responds to keyboard interaction
-- **WHEN** a keyboard user tabs to navigation elements
-- **THEN** the back-to-top button MUST be keyboard focusable
-- **AND** the button MUST be activatable with Enter or Space key
-- **AND** dots in mobile navigation MUST be keyboard focusable
-- **AND** dots MUST be activatable with Enter or Space key
+#### Scenario: Drawer has accessible structure
+- **WHEN** the drawer is rendered
+- **THEN** it MUST have aria-hidden attribute indicating visibility
+- **AND** the close button MUST have aria-label="关闭目录"
+
+### Requirement: Click-through Prevention
+The fixed navigation buttons MUST NOT trigger elements beneath them when tapped on touch devices.
+
+#### Scenario: Touch events are properly handled
+- **WHEN** a user taps a fixed button (hamburger, back-to-top)
+- **THEN** the tap MUST NOT trigger any elements beneath the button
+- **AND** only the button's intended action MUST occur
+
+#### Scenario: CSS touch properties are set
+- **WHEN** fixed buttons are rendered
+- **THEN** they MUST have touch-action: manipulation
+- **AND** they MUST have -webkit-tap-highlight-color: transparent
+- **AND** they MUST have user-select: none
 
 ### Requirement: Visual Integration
 The scroll navigation features MUST integrate smoothly with the existing page layout without causing visual conflicts or layout issues.
@@ -97,38 +116,33 @@ The scroll navigation features MUST integrate smoothly with the existing page la
 #### Scenario: Navigation does not overlap critical content
 - **WHEN** scroll navigation is displayed
 - **THEN** the back-to-top button MUST NOT obscure important page content
-- **AND** the mobile dot navigation MUST NOT obscure content in the main content area
-- **AND** appropriate z-index values MUST prevent unintended overlapping
+- **AND** the hamburger button MUST NOT obscure important page content
 
-#### Scenario: Navigation respects existing z-index hierarchy
-- **WHEN** multiple fixed/absolute elements are present
-- **THEN** the back-to-top button MUST have z-index: 1000
-- **AND** the mobile dot navigation MUST have z-index: 999
-- **AND** these values MUST NOT conflict with the mobile header (z-index: 1000)
+#### Scenario: Navigation respects z-index hierarchy
+- **WHEN** multiple fixed elements are present
+- **THEN** the mobile nav drawer MUST have z-index: 1100
+- **AND** the back-to-top button MUST have z-index: 1000
+- **AND** the hamburger button MUST have z-index: 1000
 
 #### Scenario: Navigation adapts to theme changes
 - **WHEN** the system theme changes from light to dark or vice versa
-- **THEN** the back-to-top button MUST adopt appropriate colors for the current theme
-- **AND** the dot navigation MUST adopt appropriate colors for the current theme
+- **THEN** all navigation elements MUST adopt appropriate colors for the current theme
 - **AND** colors MUST maintain sufficient contrast for visibility
 
 ### Requirement: Smooth Scrolling Behavior
 All navigation features MUST provide smooth, predictable scrolling behavior that enhances user experience.
 
-#### Scenario: Scroll to top is smooth and consistent
+#### Scenario: Scroll to top is smooth
 - **WHEN** a user clicks the back-to-top button from any scroll position
 - **THEN** the page MUST scroll smoothly to the top
-- **AND** the scroll duration MUST be reasonable (not too fast or slow)
-- **AND** the scroll MUST complete without janking or interruptions
 
-#### Scenario: Scroll to article is smooth and accurate
-- **WHEN** a user clicks a dot in mobile navigation
+#### Scenario: Scroll to article accounts for fixed header
+- **WHEN** a user clicks a TOC link (desktop or mobile drawer)
 - **THEN** the page MUST scroll smoothly to the target article's h2 heading
-- **AND** the heading MUST be positioned near the top of the viewport after scrolling
-- **AND** the scroll MUST account for any fixed headers (scroll-margin-top)
+- **AND** the heading MUST be visible (not hidden behind fixed header)
+- **AND** scroll-margin-top MUST be set appropriately (80px on mobile)
 
 #### Scenario: Scroll tracking updates active state correctly
 - **WHEN** the user manually scrolls through the page
-- **THEN** the active dot/link indicator MUST update when crossing article boundaries
-- **AND** the update MUST be smooth without rapid flickering
-- **AND** the correct article MUST be indicated based on viewport position
+- **THEN** the active link indicator MUST update when crossing article boundaries
+- **AND** both desktop TOC and mobile drawer links MUST stay in sync
