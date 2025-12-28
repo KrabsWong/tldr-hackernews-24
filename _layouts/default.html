@@ -12,72 +12,182 @@
     <link rel="stylesheet" href="{{ "/assets/css/layout.css" | relative_url }}">
     <link rel="stylesheet" href="{{ "/assets/css/components.css" | relative_url }}">
     <style>
+      .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
+        z-index: 1000;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .mobile-header .mobile-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 0.25rem;
+      }
+
+      .mobile-header .mobile-tagline {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+
       .post-list {
         list-style: none;
         padding: 0;
         margin: 0;
       }
 
-      .post-list-item {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        transition: border-color 0.2s ease;
+      .post-item {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--divider-color);
       }
 
-      .post-list-item:hover {
-        border-color: var(--accent-color);
+      .post-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
       }
 
-      .post-list-item h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-
-      .post-list-item h2 a {
+      .post-link {
         color: var(--text-primary);
         text-decoration: none;
-        transition: color 0.2s ease;
       }
 
-      .post-list-item h2 a:hover {
+      .post-link h2 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.35rem;
+        font-weight: 600;
         color: var(--accent-color);
       }
 
-      .post-list-item .date {
+      .post-link h2:hover {
+        color: var(--accent-hover);
+      }
+
+      .post-excerpt {
         color: var(--text-secondary);
-        font-size: 0.9rem;
+        font-size: 1rem;
+        line-height: 1.7;
         margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .site-footer {
+        display: none;
+        text-align: center;
+        padding: 2rem 1rem;
+        border-top: 1px solid var(--divider-color);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      .site-footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+
+      .site-footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .mobile-header {
+          display: flex;
+        }
+
+        .container {
+          flex-direction: column;
+          gap: 1.5rem;
+          padding: 1.25rem;
+          padding-top: 4.5rem;
+          padding-bottom: 3rem;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .post-item {
+          margin-bottom: 2rem;
+          padding-bottom: 1.5rem;
+        }
+
+        .post-link h2 {
+          font-size: 1.2rem;
+        }
+
+        .post-excerpt {
+          font-size: 0.95rem;
+          -webkit-line-clamp: 3;
+        }
       }
     </style>
   </head>
   <body>
-    <header class="header">
-      <h1 class="header-title"><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a></h1>
-      <button class="theme-toggle" aria-label="Toggle theme">
-        <span class="theme-toggle-icon">🔄</span>
-        <span class="theme-toggle-label">Auto</span>
-      </button>
+    <header class="mobile-header">
+      <span class="mobile-title">{{ site.title | default: site.github.repository_name }}</span>
+      <span class="mobile-tagline">{{ site.description }}</span>
     </header>
 
     <div class="container">
-      <main class="content" style="width: 100%;">
-        <h1 style="margin-bottom: 2rem;">Latest Posts</h1>
+      <aside class="sidebar">
+        <div class="site-info">
+          <h1><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a></h1>
+          <p>{{ site.description | default: site.github.project_tagline }}</p>
+        </div>
+
+        <div class="sidebar-footer">
+          Built with <a href="https://jekyllrb.com" target="_blank">Jekyll</a> and hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>.
+        </div>
+      </aside>
+
+      <main class="content">
         <ul class="post-list">
           {% for post in site.posts %}
-            <li class="post-list-item">
-              <h2><a href="{{ post.url | relative_url }}">{{ post.date | date: "%Y-%m-%d" }}</a></h2>
-              <p class="date">{{ post.date | date: "%Y年%m月%d日" }}</p>
+            <li class="post-item">
+              <a href="{{ post.url | relative_url }}" class="post-link">
+                <h2>{{ post.date | date: "%Y-%m-%d" }}</h2>
+              </a>
+              <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 350 }}</p>
             </li>
           {% endfor %}
         </ul>
       </main>
     </div>
 
-    <script src="{{ "/assets/js/theme-toggle.js" | relative_url }}"></script>
+    <footer class="site-footer">
+      Built with <a href="https://jekyllrb.com" target="_blank">Jekyll</a> and hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>.
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+
+      function getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applySystemTheme() {
+        root.removeAttribute('data-theme');
+      }
+
+      applySystemTheme();
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        applySystemTheme();
+      });
+    </script>
 
     {% if site.google_analytics %}
       <!-- Google tag (gtag.js) -->

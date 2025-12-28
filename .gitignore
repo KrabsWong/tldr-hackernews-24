@@ -1,8 +1,9 @@
 # Jekyll
-_site/
+__pycache__site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
+mock-preview
 
 # Bundler
 vendor/bundle/
