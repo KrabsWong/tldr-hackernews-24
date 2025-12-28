@@ -35,10 +35,15 @@
         <ul class="post-list">
           {% for post in site.posts %}
             <li class="post-item">
-              <a href="{{ post.url | relative_url }}" class="post-link">
-                <h2>{{ post.date | date: "%Y-%m-%d" }}</h2>
-              </a>
-              <div class="post-titles">
+              <div class="post-header">
+                <a href="{{ post.url | relative_url }}" class="post-link">
+                  <h2>{{ post.date | date: "%Y-%m-%d" }}</h2>
+                </a>
+                <button class="toggle-titles" aria-label="展开/收起标题列表" aria-expanded="false">
+                  <span class="toggle-icon">▼</span>
+                </button>
+              </div>
+              <div class="post-titles collapsed">
                 {% assign html_content = post.content %}
                 {% assign h2_sections = html_content | split: "<h2" %}
                 {% for section in h2_sections %}
@@ -88,6 +93,7 @@
       });
     </script>
     
+    <script src="{{ "/assets/js/toggle.js" | relative_url }}"></script>
     <script src="{{ "/assets/js/pagination.js" | relative_url }}"></script>
 
     {% if site.google_analytics %}
