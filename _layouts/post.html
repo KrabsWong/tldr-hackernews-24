@@ -113,15 +113,26 @@
         return;
       }
 
+      // Helper function to generate anchor ID (must match homepage Liquid template logic)
+      function generateAnchorId(text, index) {
+        const normalized = text.toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/'/g, '')
+          .replace(/"/g, '')
+          .replace(/:/g, '')
+          .replace(/,/g, '')
+          .replace(/\./g, '')
+          .replace(/\?/g, '')
+          .replace(/!/g, '')
+          .substring(0, 50);
+        return 'heading-' + index + '-' + normalized;
+      }
+
       headings.forEach((heading, index) => {
         // Create an ID for the heading if it doesn't exist
         if (!heading.id) {
           const text = heading.textContent.trim();
-          const id = 'heading-' + index + '-' + text.toLowerCase()
-            .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .substring(0, 50);
-          heading.id = id;
+          heading.id = generateAnchorId(text, index);
         }
 
         // Create outline item for desktop TOC
@@ -297,6 +308,27 @@
 
       window.addEventListener('scroll', updateActiveState);
       updateActiveState(); // Initial call
+
+      // Handle anchor navigation on page load
+      function scrollToAnchorOnLoad() {
+        const hash = window.location.hash;
+        if (hash) {
+          const targetId = hash.substring(1); // Remove the '#'
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            // Small delay to ensure layout is complete
+            setTimeout(() => {
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }, 100);
+          }
+        }
+      }
+
+      // Call on page load
+      scrollToAnchorOnLoad();
     });
     </script>
   </body>
