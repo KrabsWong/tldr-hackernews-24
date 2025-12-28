@@ -46,28 +46,32 @@
 ### 6. Render pagination controls in HTML - [x]
 - ✅ Added pagination controls container in `_layouts/default.html` below `.post-list`
 - ✅ Structure: `<div class="pagination-controls">...</div>` with display:none initially
-- ✅ Included: Previous button, page counter, Next button
+- ✅ Changed from `<button>` elements to `<a>` text links for cleaner UI
+- ✅ Included: Previous link, page counter, Next link
 - ✅ Added ARIA labels: `aria-label="上一页"`, `aria-label="下一页"`
 - ✅ Added ARIA live region: `<div aria-live="polite" class="sr-only" id="pagination-announce">`
-- **Validation**: ✅ HTML structure matches design spec
+- **Validation**: ✅ HTML structure matches design spec with text-based navigation
 
 ### 7. Add CSS styling for pagination controls in `assets/css/layout.css` - [x]
 - ✅ Created `.pagination-controls` class with centered flexbox layout
-- ✅ Styled buttons with padding: 0.75rem 1.5rem, border, border-radius
-- ✅ Added hover effects: background and border color changes
-- ✅ Styled disabled buttons: opacity: 0.5, cursor: not-allowed
-- ✅ Added mobile responsive styles: column layout, smaller buttons
+- ✅ Styled links with minimal design: no background, no border, padding: 0
+- ✅ Added hover effects: color changes to accent color
+- ✅ Styled disabled links: opacity: 0.5, cursor: not-allowed, pointer-events: none
+- ✅ Added mobile responsive styles: maintained horizontal layout
 - ✅ Styled `.pagination-info` with accent color for page numbers
 - ✅ Added `.sr-only` utility class for screen reader announcements
-- **Validation**: ✅ CSS follows design spec with proper states and responsiveness
+- **Validation**: ✅ CSS follows design spec with text-based styling instead of button styling
 
 ### 8. Implement pagination event handlers - [x]
-- ✅ Added click handlers for prev/next buttons in pagination.js
+- ✅ Added click handlers for prev/next links (not buttons) in pagination.js
+- ✅ Event handlers call `e.preventDefault()` to prevent navigation
 - ✅ On click: validates page bounds, updates current page, calls `showPage()`, updates controls
+- ✅ Modified `showPage()` to collapse all posts then call `expandFirstVisiblePost()`
 - ✅ Scrolls to top of post list after page change with smooth scroll
 - ✅ Handles window resize: recalculates `itemsPerPage` and re-renders
-- ✅ Button keyboard support built-in via native button elements
-- **Validation**: ✅ All event handlers implemented correctly
+- ✅ Link keyboard support built-in via native anchor elements
+- ✅ Uses `.disabled` CSS class instead of `disabled` attribute for links
+- **Validation**: ✅ All event handlers implemented correctly with link-based navigation
 
 ### 9. Add accessibility features - [x]
 - ✅ Buttons are keyboard accessible (native button elements)
@@ -84,17 +88,63 @@
 - ✅ JavaScript uses IIFE to avoid global scope pollution
 - **Validation**: ✅ Implementation handles all scenarios correctly
 
-## Phase 3: Integration and Testing
+## Phase 3: Collapse/Expand Functionality
 
-### 11. Test complete feature integration - [x]
-- ✅ Title expansion and pagination work together seamlessly (independent features)
+### 11. Add toggle button to post header in `_layouts/default.html` - [x]
+- ✅ Wrapped date link and toggle button in `.post-header` div with flexbox layout
+- ✅ Added `<button class="toggle-titles">` with arrow icon (▼)
+- ✅ Set `aria-expanded="true"` for first post, `"false"` for others using Liquid conditional
+- ✅ Added `aria-label="展开/收起标题列表"` for accessibility
+- ✅ Wrapped icon in `<span class="toggle-icon">` for CSS animation
+- **Validation**: ✅ Toggle button integrated into post header layout
+
+### 12. Add collapsed class to post titles by default - [x]
+- ✅ Modified `.post-titles` to conditionally include `collapsed` class
+- ✅ First post (forloop.first): no `.collapsed` class (expanded by default)
+- ✅ All other posts: include `.collapsed` class (hidden by default)
+- ✅ Used Liquid `{% unless forloop.first %}` conditional logic
+- **Validation**: ✅ First post visible, others hidden on initial load
+
+### 13. Create `assets/js/toggle.js` with toggle functionality - [x]
+- ✅ Created IIFE module to avoid global scope pollution
+- ✅ Implemented `initToggle()` function that queries all `.toggle-titles` buttons
+- ✅ Added click handler that toggles `aria-expanded` attribute
+- ✅ Click handler adds/removes `.collapsed` class on `.post-titles` div
+- ✅ Implemented `expandFirstVisiblePost()` helper function
+- ✅ Exposed `expandFirstVisiblePost()` globally for pagination integration
+- ✅ Function filters visible posts and expands the first one
+- **Validation**: ✅ Toggle functionality works independently and integrates with pagination
+
+### 14. Add CSS styling for collapse/expand animations - [x]
+- ✅ Styled `.post-header` with flexbox for toggle button alignment
+- ✅ Created `.toggle-titles` button style: no border, no background, minimal padding
+- ✅ Added `.post-titles` with `max-height: 1000px` and smooth transition
+- ✅ Created `.post-titles.collapsed` with `max-height: 0` to hide content
+- ✅ Added `.toggle-icon` rotation animation: `transform: rotate(-180deg)` when expanded
+- ✅ Set transition duration: 0.3s ease for both max-height and transform
+- ✅ Added hover effects for toggle button
+- **Validation**: ✅ Smooth animations, toggle icon rotates, content expands/collapses
+
+### 15. Integrate collapse/expand with pagination - [x]
+- ✅ Modified `pagination.js` `showPage()` function to collapse all posts first
+- ✅ Added call to `window.expandFirstVisiblePost()` after showing new page
+- ✅ Ensured first post on each page is expanded automatically
+- ✅ Maintained toggle state management via `aria-expanded` attribute
+- ✅ Tested pagination navigation: first post always expanded on page change
+- **Validation**: ✅ Seamless integration, consistent behavior across pages
+
+## Phase 4: Integration and Testing
+
+### 16. Test complete feature integration - [x]
+- ✅ Title expansion, pagination, and collapse/expand work together seamlessly
 - ✅ Tested with real post structure from `_posts/2025-12-06-daily.md`
-- ✅ JavaScript pagination.js properly queries `.post-item` elements
-- ✅ CSS styling coordinated across layout.css for both features
+- ✅ JavaScript modules (pagination.js, toggle.js) properly coordinated
+- ✅ CSS styling coordinated across layout.css for all three features
 - ✅ No conflicting selectors or styles
-- **Validation**: ✅ Integration complete, no conflicts detected
+- ✅ First post expanded on load and after pagination
+- **Validation**: ✅ Full integration complete, all features work harmoniously
 
-### 12. Verify backwards compatibility - [x]
+### 17. Verify backwards compatibility - [x]
 - ✅ Post detail pages unchanged (post.html not modified)
 - ✅ Theme toggle functionality preserved in default.html
 - ✅ Responsive design maintained with mobile-first CSS
@@ -103,20 +153,25 @@
 - ✅ Kept `.post-excerpt` CSS for potential future use
 - **Validation**: ✅ No regressions, existing features work as before
 
-### 13. Optional: Add URL hash persistence for pagination state - [ ]
+### 18. Optional: Add URL hash persistence for pagination state - [ ]
 - ⏭️ **SKIPPED**: Not implemented in initial release
 - Can be added in future iteration if user requests it
 - Current implementation sufficient for requirements
 
 ## Dependencies
 - ✅ Phase 2 developed after Phase 1 completion
-- ✅ Task 11-12 completed after both phases
-- ⏭️ Task 13 skipped as optional enhancement
+- ✅ Phase 3 developed after Phase 2 completion
+- ✅ Phase 4 tasks completed after all implementation phases
+- ⏭️ Task 18 skipped as optional enhancement
 
 ## Success Criteria
 - ✅ All article titles display on homepage without truncation
-- ✅ Pagination controls appear and function correctly
-- ✅ Page load time will remain under 2 seconds (minimal JS, client-side only)
+- ✅ Pagination controls appear and function correctly with text-based links
+- ✅ First post expanded by default, others collapsed
+- ✅ Toggle buttons work smoothly with CSS animations
+- ✅ Pagination integration: first post on each page auto-expands
+- ✅ Page load time remains under 2 seconds (minimal JS, client-side only)
 - ✅ Mobile and desktop experiences properly styled
 - ✅ No JavaScript errors in implementation
 - ✅ Accessibility standards met (keyboard + screen reader support)
+- ✅ Page length manageable with collapsed default state
