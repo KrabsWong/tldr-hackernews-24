@@ -477,6 +477,7 @@
   .post-content h2 {
     font-size: 1.05rem;
     margin-top: 1.5rem;
+    scroll-margin-top: 80px;
   }
 
   .post-content p {
