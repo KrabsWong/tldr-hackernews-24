@@ -56,6 +56,14 @@
       Built with <a href="https://jekyllrb.com" target="_blank">Jekyll</a> and hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>.
     </footer>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="回到顶部">↑</button>
+
+    <!-- Mobile Dot Navigation -->
+    <nav class="mobile-dot-nav" aria-label="文章导航">
+      <ul id="dot-nav-list"></ul>
+    </nav>
+
     <script src="{{ "/assets/js/theme-toggle.js" | relative_url }}"></script>
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
 
@@ -74,8 +82,10 @@
     document.addEventListener('DOMContentLoaded', function() {
       const postContent = document.querySelector('.post-content');
       const outlineList = document.getElementById('outline-list');
+      const dotNavList = document.getElementById('dot-nav-list');
+      const backToTopBtn = document.querySelector('.back-to-top');
 
-      if (!postContent || !outlineList) return;
+      if (!postContent || !outlineList || !dotNavList) return;
 
       // Get all h2 headings
       const headings = postContent.querySelectorAll('h2');
@@ -96,20 +106,30 @@
           heading.id = id;
         }
 
-        // Create outline item
+        // Create outline item for desktop TOC
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = '#' + heading.id;
         a.textContent = heading.textContent.replace(/^\d+\.\s*/, ''); // Remove numbering
         a.className = 'outline-link';
-
         li.appendChild(a);
         outlineList.appendChild(li);
+
+        // Create dot navigation item for mobile
+        const dotLi = document.createElement('li');
+        const dotBtn = document.createElement('button');
+        dotBtn.setAttribute('aria-label', '跳转到: ' + heading.textContent.replace(/^\d+\.\s*/, ''));
+        dotBtn.setAttribute('data-target', heading.id);
+        dotBtn.className = 'dot-nav-btn';
+        dotLi.appendChild(dotBtn);
+        dotNavList.appendChild(dotLi);
       });
 
       // Smooth scroll and active state handling
       const outlineLinks = document.querySelectorAll('.outline-link');
+      const dotNavBtns = document.querySelectorAll('.dot-nav-btn');
 
+      // Handle outline link clicks (desktop TOC)
       outlineLinks.forEach(link => {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -129,6 +149,35 @@
         });
       });
 
+      // Handle dot navigation button clicks (mobile)
+      dotNavBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const targetId = this.getAttribute('data-target');
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+
+            // Update active state
+            dotNavBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+          }
+        });
+      });
+
+      // Back to top button functionality
+      if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', function() {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
+
       // Update active state on scroll
       function updateActiveState() {
         const scrollPosition = window.scrollY + 100;
@@ -142,10 +191,19 @@
         });
 
         if (activeHeading) {
+          // Update desktop TOC links
           outlineLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#' + activeHeading.id) {
               link.classList.add('active');
+            }
+          });
+
+          // Update mobile dot navigation
+          dotNavBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-target') === activeHeading.id) {
+              btn.classList.add('active');
             }
           });
         }
