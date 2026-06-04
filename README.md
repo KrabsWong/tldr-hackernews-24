@@ -2,8 +2,7 @@
 
 A Jekyll-based HackerNews daily aggregator with modern UI and dark/light theme support.
 
-<img width="1408" height="768" alt="" src="https://github.com/user-attachments/assets/c7056e56-e589-4faa-99c6-086f9df5ad8b" />
-
+<img width="1672" height="941" alt="clipboard-image-1780577903" src="https://github.com/user-attachments/assets/550312fe-777e-4ab9-b22b-84123c7214fc" />
 
 ## Features
 
