@@ -4,106 +4,92 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#fdfdfc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1d1d1c" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="{{ "/assets/favicon.svg" | relative_url }}" type="image/svg+xml">
 
     <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
     <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
 
-    <link rel="stylesheet" href="{{ "/assets/css/theme.css" | relative_url }}?v=7">
-    <link rel="stylesheet" href="{{ "/assets/css/layout.css" | relative_url }}?v=7">
-    <link rel="stylesheet" href="{{ "/assets/css/components.css" | relative_url }}?v=7">
+    <link rel="preconnect" href="https://weekly.tw93.fun">
+    <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin>
+    <link rel="stylesheet" href="https://weekly.tw93.fun/fonts/jinkai.css">
+    <link rel="stylesheet" href="{{ "/assets/css/theme.css" | relative_url }}?v=13">
+    <link rel="stylesheet" href="{{ "/assets/css/layout.css" | relative_url }}?v=13">
+    <link rel="stylesheet" href="{{ "/assets/css/components.css" | relative_url }}?v=17">
   </head>
-  <body>
-    <header class="mobile-header">
-      <a href="https://krabswong.github.io/tldr-hackernews-24/"><span class="mobile-title">{{ site.title | default: site.github.repository_name }}</span></a>
-      <span class="mobile-tagline">{{ site.description }}</span>
-    </header>
+  <body class="post-page">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
 
-    <div class="container">
-      <aside class="sidebar">
-        <div class="site-info">
-          <h1><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a></h1>
-          <p>{{ site.description | default: site.github.project_tagline }}</p>
-          <img class="avatar" src="https://img.gamecenter.qq.com/xgame/gm/1766923566849_7269932fdd7f8ba760b50d8a119a60c0.png" />
+    {% assign html_content = content %}
+    {% assign h2_sections = html_content | split: "<h2" %}
+    {% assign article_count = h2_sections.size | minus: 1 %}
+
+    <main class="post-layout" id="main-content">
+      <aside class="article-sidebar" id="article-sidebar" aria-label="本期文章目录">
+        <a class="sidebar-brand" href="{{ "/" | relative_url }}" aria-label="{{ site.title }} 首页">
+          <img src="{{ "/assets/favicon.svg" | relative_url }}" alt="" width="32" height="32">
+          <span>TL;DR HackerNews</span>
+        </a>
+        <div class="sidebar-meta">
+          <time datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%Y/%m/%d" }}</time>
+          <span>{{ article_count }} 篇</span>
         </div>
-
-        <div class="outline-wrapper">
-          <div class="outline">
-            <h3>目录</h3>
-            <ul id="outline-list">
-            </ul>
-          </div>
-        </div>
-
-        <div class="sidebar-footer">
-          Built with <a href="https://jekyllrb.com" target="_blank">Jekyll</a> and hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>.
-        </div>
-      </aside>
-
-      <main class="content">
-        {% assign html_content = content %}
-        {% assign h2_sections = html_content | split: "<h2" %}
-        {% assign article_count = h2_sections.size | minus: 1 %}
-        <div class="post-meta">
-          <strong>{{ page.title }} ({{ article_count }})</strong>
-          <span class="post-meta-date">{{ page.date | date: "%Y年%m月%d日" }}</span>
-        </div>
-
-        <div class="post-content">
-          {{ content }}
-        </div>
-      </main>
-    </div>
-
-    <footer class="site-footer">
-      <img class="avatar" src="https://img.gamecenter.qq.com/xgame/gm/1766923566849_7269932fdd7f8ba760b50d8a119a60c0.png" />
-      Built with <a href="https://jekyllrb.com" target="_blank">Jekyll</a> and hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>.
-    </footer>
-
-    <script>
-      const root = document.documentElement;
-
-      function getSystemTheme() {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-
-      function applySystemTheme() {
-        root.removeAttribute('data-theme');
-      }
-
-      applySystemTheme();
-
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        applySystemTheme();
-      });
-    </script>
-
-    <!-- Back to Top Button -->
-    <button class="back-to-top" aria-label="回到顶部">↑</button>
-
-    <!-- Mobile Navigation Menu -->
-    <button class="mobile-menu-toggle" aria-label="打开目录菜单" aria-expanded="false">
-      <span class="hamburger-icon"></span>
-    </button>
-
-    <!-- Mobile Navigation Drawer -->
-    <div class="mobile-nav-drawer" aria-hidden="true">
-      <div class="mobile-nav-overlay"></div>
-      <aside class="mobile-nav-panel">
-        <div class="mobile-nav-header">
-          <h3>目录</h3>
-          <button class="mobile-nav-close" aria-label="关闭目录">&times;</button>
-        </div>
-        <nav class="mobile-nav-content">
-          <ul id="mobile-nav-list"></ul>
+        <button class="sidebar-close" id="sidebar-close" type="button" aria-label="关闭文章目录">×</button>
+        <nav class="sidebar-outline" aria-label="本期文章">
+          <ol id="outline-list"></ol>
         </nav>
       </aside>
-    </div>
+
+      <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+      <section class="issue-column">
+        <header class="mobile-reader-nav">
+          <a class="mobile-brand" href="{{ "/" | relative_url }}" aria-label="返回日报首页">
+            <img src="{{ "/assets/favicon.svg" | relative_url }}" alt="" width="32" height="32">
+          </a>
+          <span class="current-chapter">
+            <span class="current-position" id="current-position">01 / {{ article_count }}</span>
+            <span class="current-title" id="current-title">本期文章</span>
+          </span>
+          <button class="sidebar-open" id="sidebar-open" type="button" aria-label="打开文章目录" aria-controls="article-sidebar" aria-expanded="false">目</button>
+        </header>
+
+        <header class="issue-heading">
+          <div class="issue-title-row">
+            <h1>{{ page.date | date: "%m 月 %d 日" }} · HN 日报</h1>
+            <a class="issue-home" href="{{ "/" | relative_url }}" aria-label="返回日报首页">←</a>
+          </div>
+          <p>{{ page.date | date: "%Y/%m/%d" }} · {{ article_count }} 篇热门讨论</p>
+        </header>
+
+        <p class="issue-caption">每日从 Hacker News 热门讨论中筛选内容，整理中文摘要、背景信息和社区观点，方便快速判断哪些文章值得继续阅读。</p>
+
+        <blockquote class="issue-note">
+          <p><strong>阅读提示：</strong>左侧目录会跟随阅读位置更新。文章标题下方保留原文链接，末尾可前往 Hacker News 查看完整讨论。</p>
+        </blockquote>
+
+        <article class="post-content">
+          {{ content }}
+        </article>
+
+        <footer class="post-footer">
+          <div>
+            <span>发布于 {{ page.date | date: "%Y/%m/%d" }}</span>
+            <p class="footer-credit">整套界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
+          </div>
+          <a href="{{ "/" | relative_url }}">返回首页</a>
+        </footer>
+      </section>
+    </main>
+
+    <button class="back-to-top" aria-label="回到顶部"><span aria-hidden="true">↑</span></button>
 
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
-    <script src="{{ "/assets/js/post.js" | relative_url }}"></script>
+    <script src="{{ "/assets/js/post.js" | relative_url }}?v=14"></script>
 
     {% if site.google_analytics %}
-      <!-- Google tag (gtag.js) -->
       <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];

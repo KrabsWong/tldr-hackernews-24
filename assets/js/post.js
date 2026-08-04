@@ -1,220 +1,165 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const postContent = document.querySelector('.post-content');
-  const outlineList = document.getElementById('outline-list');
-  const mobileNavList = document.getElementById('mobile-nav-list');
-  const backToTopBtn = document.querySelector('.back-to-top');
-  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-  const mobileNavDrawer = document.querySelector('.mobile-nav-drawer');
-  const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
-  const mobileNavClose = document.querySelector('.mobile-nav-close');
+document.addEventListener("DOMContentLoaded", () => {
+  const headings = Array.from(document.querySelectorAll(".post-content > h2"));
+  const outline = document.getElementById("outline-list");
+  const outlineScroller = document.querySelector(".sidebar-outline");
+  const sidebar = document.getElementById("article-sidebar");
+  const sidebarOpen = document.getElementById("sidebar-open");
+  const sidebarClose = document.getElementById("sidebar-close");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+  const currentPosition = document.getElementById("current-position");
+  const currentTitle = document.getElementById("current-title");
+  const backToTop = document.querySelector(".back-to-top");
+  const mobileQuery = window.matchMedia("(max-width: 900px)");
 
-  if (!postContent || !outlineList || !mobileNavList) return;
+  if (!outline || headings.length === 0) return;
 
-  // Get all h2 headings
-  const headings = postContent.querySelectorAll('h2');
-
-  if (headings.length === 0) {
-    outlineList.innerHTML = '<li class="outline-empty">暂无目录项</li>';
-    return;
-  }
-
-  // Rewrite all H2 IDs to simple sequential format (article-1, article-2, ...)
-  headings.forEach((heading, index) => {
-    heading.id = 'article-' + (index + 1);
-    heading.textContent = heading.textContent.replace(/^\d+\.\s*/, '');
-
-    // Create outline item for desktop TOC
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + heading.id;
-    a.textContent = heading.textContent;
-    a.className = 'outline-link';
-    li.appendChild(a);
-    outlineList.appendChild(li);
-
-    // Create mobile navigation item (same structure)
-    const mobileLi = document.createElement('li');
-    const mobileA = document.createElement('a');
-    mobileA.href = '#' + heading.id;
-    mobileA.textContent = heading.textContent;
-    mobileA.className = 'mobile-nav-link';
-    mobileLi.appendChild(mobileA);
-    mobileNavList.appendChild(mobileLi);
+  document.querySelectorAll('.post-content a[href^="https://news.ycombinator.com/item?id="]').forEach((link) => {
+    const itemId = new URL(link.href).searchParams.get("id");
+    link.textContent = itemId ? `查看原始讨论 · #${itemId}` : "查看原始讨论";
+    link.classList.add("hn-discussion-link");
+    link.setAttribute("aria-label", itemId
+      ? `前往 Hacker News 查看原始讨论，条目 ${itemId}`
+      : "前往 Hacker News 查看原始讨论");
+    link.parentElement?.classList.add("hn-discussion-label");
+    link.closest("p")?.classList.add("hn-discussion-row");
   });
 
-  // Smooth scroll and active state handling
-  const outlineLinks = document.querySelectorAll('.outline-link');
-  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+  const setSidebarOpen = (open) => {
+    if (!sidebar || !mobileQuery.matches) return;
+    sidebar.classList.toggle("is-open", open);
+    sidebarOverlay?.classList.toggle("is-visible", open);
+    sidebarOpen?.setAttribute("aria-expanded", String(open));
+    sidebar.setAttribute("aria-hidden", String(!open));
+    sidebar.inert = !open;
+    document.body.classList.toggle("sidebar-open", open);
+    if (open) sidebarClose?.focus();
+  };
 
-  // Function to close mobile drawer
-  function closeMobileDrawer() {
-    mobileNavDrawer.classList.remove('active');
-    mobileNavDrawer.setAttribute('aria-hidden', 'true');
-    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
+  const syncSidebarMode = () => {
+    if (!sidebar) return;
+    if (mobileQuery.matches) {
+      setSidebarOpen(false);
+      return;
+    }
 
-  // Function to open mobile drawer
-  function openMobileDrawer() {
-    mobileNavDrawer.classList.add('active');
-    mobileNavDrawer.setAttribute('aria-hidden', 'false');
-    mobileMenuToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
+    sidebar.classList.remove("is-open");
+    sidebar.removeAttribute("aria-hidden");
+    sidebar.inert = false;
+    sidebarOverlay?.classList.remove("is-visible");
+    sidebarOpen?.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("sidebar-open");
+  };
 
-  // Handle outline link clicks (desktop TOC)
-  outlineLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href').substring(1);
-      const targetElement = document.getElementById(targetId);
+  const links = headings.map((heading, index) => {
+    const number = String(index + 1).padStart(2, "0");
+    const title = heading.textContent.replace(/^\d+[.、]\s*/, "").trim();
+    heading.id = `article-${index + 1}`;
+    heading.dataset.number = number;
+    heading.textContent = title;
 
-      if (targetElement) {
-        targetElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-
-        // Update active state
-        outlineLinks.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-      }
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = `#${heading.id}`;
+    link.dataset.number = number;
+    link.textContent = title;
+    link.setAttribute("aria-label", `第 ${index + 1} 篇：${title}`);
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (mobileQuery.matches) setSidebarOpen(false);
+      history.pushState(null, "", link.hash);
+      heading.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+
+    item.appendChild(link);
+    outline.appendChild(item);
+    return link;
   });
 
-  // Handle mobile navigation link clicks
-  mobileNavLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href').substring(1);
-      const targetElement = document.getElementById(targetId);
+  let framePending = false;
+  let previousIndex = -1;
 
-      if (targetElement) {
-        closeMobileDrawer();
-        
-        setTimeout(() => {
-          targetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }, 300); // Wait for drawer to close
+  const keepActiveLinkVisible = (link) => {
+    if (!outlineScroller || !link) return;
+    const scrollerRect = outlineScroller.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
 
-        // Update active state
-        mobileNavLinks.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-      }
+    if (linkRect.top < scrollerRect.top + 8) {
+      outlineScroller.scrollTop -= scrollerRect.top + 8 - linkRect.top;
+    } else if (linkRect.bottom > scrollerRect.bottom - 8) {
+      outlineScroller.scrollTop += linkRect.bottom - scrollerRect.bottom + 8;
+    }
+  };
+
+  const updateReadingState = () => {
+    const mobileNavBottom = document.querySelector(".mobile-reader-nav")
+      ?.getBoundingClientRect().bottom || 0;
+    const threshold = Math.max(160, mobileNavBottom + 32);
+    let currentIndex = 0;
+
+    headings.forEach((heading, index) => {
+      if (heading.getBoundingClientRect().top <= threshold) currentIndex = index;
     });
+
+    links.forEach((link, index) => {
+      const active = index === currentIndex;
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+
+    if (currentIndex !== previousIndex) {
+      keepActiveLinkVisible(links[currentIndex]);
+      previousIndex = currentIndex;
+    }
+
+    if (currentPosition) {
+      currentPosition.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${headings.length}`;
+    }
+    if (currentTitle) currentTitle.textContent = headings[currentIndex].textContent.trim();
+    backToTop?.classList.toggle("visible", window.scrollY > 700);
+    framePending = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    if (framePending) return;
+    framePending = true;
+    window.requestAnimationFrame(updateReadingState);
+  }, { passive: true });
+
+  sidebarOpen?.addEventListener("click", () => setSidebarOpen(true));
+  sidebarClose?.addEventListener("click", () => {
+    setSidebarOpen(false);
+    sidebarOpen?.focus();
   });
+  sidebarOverlay?.addEventListener("click", () => {
+    setSidebarOpen(false);
+    sidebarOpen?.focus();
+  });
+  mobileQuery.addEventListener("change", syncSidebarMode);
 
-  // Mobile menu toggle
-  if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      openMobileDrawer();
-    });
-    // Also handle touch events to prevent click-through
-    mobileMenuToggle.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      openMobileDrawer();
-    }, { passive: false });
-  }
-
-  // Close drawer on overlay click
-  if (mobileNavOverlay) {
-    mobileNavOverlay.addEventListener('click', closeMobileDrawer);
-  }
-
-  // Close drawer on close button click
-  if (mobileNavClose) {
-    mobileNavClose.addEventListener('click', closeMobileDrawer);
-  }
-
-  // Close drawer on ESC key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && mobileNavDrawer.classList.contains('active')) {
-      closeMobileDrawer();
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && sidebar?.classList.contains("is-open")) {
+      setSidebarOpen(false);
+      sidebarOpen?.focus();
     }
   });
 
-  // Back to top button functionality
-  if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
-    // Also handle touch events to prevent click-through
-    backToTopBtn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, { passive: false });
+  backToTop?.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  syncSidebarMode();
+  updateReadingState();
+
+  if (window.location.hash.startsWith("#article-")) {
+    window.setTimeout(() => {
+      const target = document.querySelector(window.location.hash);
+      if (!target) return;
+
+      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      target.scrollIntoView({ block: "start" });
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+    }, 0);
   }
-
-  // Update active state on scroll
-  function updateActiveState() {
-    const scrollPosition = window.scrollY + 100;
-
-    let activeHeading = null;
-    headings.forEach(heading => {
-      const headingTop = heading.offsetTop;
-      if (headingTop <= scrollPosition) {
-        activeHeading = heading;
-      }
-    });
-
-    if (activeHeading) {
-      // Update desktop TOC links
-      outlineLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + activeHeading.id) {
-          link.classList.add('active');
-        }
-      });
-
-      // Update mobile navigation
-      mobileNavLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + activeHeading.id) {
-          link.classList.add('active');
-        }
-      });
-    }
-  }
-
-  window.addEventListener('scroll', updateActiveState);
-  updateActiveState(); // Initial call
-
-  // Handle anchor navigation on page load
-  function scrollToAnchorOnLoad() {
-    const hash = window.location.hash;
-    if (hash) {
-      const targetId = hash.substring(1); // Remove the '#'
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        // Small delay to ensure layout is complete
-        setTimeout(() => {
-          targetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }, 100);
-      }
-    }
-  }
-
-  // Call on page load
-  scrollToAnchorOnLoad();
 });
