@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarOpen?.setAttribute("aria-expanded", String(open));
     sidebar.setAttribute("aria-hidden", String(!open));
     sidebar.inert = !open;
-    document.body.classList.toggle("sidebar-open", open);
+    document.body.classList.toggle("has-sidebar-open", open);
     if (open) sidebarClose?.focus();
   };
 
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebar.inert = false;
     sidebarOverlay?.classList.remove("is-visible");
     sidebarOpen?.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("sidebar-open");
+    document.body.classList.remove("has-sidebar-open");
   };
 
   const links = headings.map((heading, index) => {

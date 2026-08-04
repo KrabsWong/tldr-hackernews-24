@@ -427,7 +427,7 @@
     bottom: 0;
     left: 0;
     z-index: 70;
-    width: min(84vw, 320px);
+    width: min(calc(100vw - 4.5rem), 320px);
     height: 100dvh;
     box-shadow: 16px 0 28px -12px oklch(8% 0.006 250 / 0.35);
     transform: translateX(-105%);
@@ -439,8 +439,15 @@
   }
 
   .sidebar-brand {
+    width: calc(100% - 4.75rem);
+    min-width: 0;
     margin: 22px 20px 0;
     font-size: 1.45rem;
+  }
+
+  .sidebar-brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .sidebar-meta {
@@ -461,11 +468,13 @@
     z-index: 60;
     display: block;
     border: 0;
-    background: oklch(15% 0.008 250 / 0.45);
+    background: rgb(12 18 24 / 0.34);
+    -webkit-backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(1.5px);
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 160ms ease-out;
+    transition: opacity 180ms ease-out;
   }
 
   .sidebar-overlay.is-visible {
@@ -473,7 +482,7 @@
     pointer-events: auto;
   }
 
-  .post-page.sidebar-open {
+  .post-page.has-sidebar-open {
     overflow: hidden;
   }
 
