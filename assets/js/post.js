@@ -24,6 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
     link.closest("p")?.classList.add("hn-discussion-row");
   });
 
+  const sourceDisclosures = Array.from(document.querySelectorAll(".summary-provenance__details"));
+
+  sourceDisclosures.forEach((disclosure) => {
+    disclosure.addEventListener("toggle", () => {
+      if (!disclosure.open) return;
+      sourceDisclosures.forEach((other) => {
+        if (other !== disclosure) other.open = false;
+      });
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) return;
+    sourceDisclosures.forEach((disclosure) => {
+      if (disclosure.open && !disclosure.contains(event.target)) disclosure.open = false;
+    });
+  });
+
   const setSidebarOpen = (open) => {
     if (!sidebar || !mobileQuery.matches) return;
     sidebar.classList.toggle("is-open", open);
@@ -138,7 +156,17 @@ document.addEventListener("DOMContentLoaded", () => {
   mobileQuery.addEventListener("change", syncSidebarMode);
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && sidebar?.classList.contains("is-open")) {
+    if (event.key !== "Escape") return;
+
+    const openDisclosure = sourceDisclosures.find((disclosure) => disclosure.open);
+    if (openDisclosure) {
+      openDisclosure.open = false;
+      openDisclosure.querySelector("summary")?.focus();
+      event.preventDefault();
+      return;
+    }
+
+    if (sidebar?.classList.contains("is-open")) {
       setSidebarOpen(false);
       sidebarOpen?.focus();
     }
