@@ -1,0 +1,3 @@
+# Cloudflare Pages serves this project at the root of its pages.dev hostname.
+url: "https://tldr-24.pages.dev"
+baseurl: ""
