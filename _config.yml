@@ -8,9 +8,9 @@ relative_links:
   enabled: true
   collections: true
 
-# GitHub Pages configuration
-baseurl: "/tldr-hackernews-24" # This should match your repository name
-url: "https://krabswong.github.io"
+# Canonical Cloudflare Pages URL
+baseurl: ""
+url: "https://tldr-24.pages.dev"
 
 # Permalink configuration for posts
 permalink: /:year/:month/:day/:title/
