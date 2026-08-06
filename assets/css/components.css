@@ -182,20 +182,6 @@
   text-align: center;
 }
 
-.issue-note {
-  margin: 1.6rem 0 0;
-  padding: 0.55rem 0.85rem;
-  border-left: 1px solid var(--line-strong);
-  background: var(--paper);
-  color: var(--ink-soft);
-}
-
-.issue-note p {
-  margin: 0;
-  font-size: var(--type-supporting);
-  line-height: 1.7;
-}
-
 .post-content {
   width: 100%;
   margin: 0;
