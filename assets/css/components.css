@@ -1,3 +1,14 @@
+.post-page {
+  --type-page-title: 2rem;
+  --type-article-title: 1.5rem;
+  --type-section-title: 1.125rem;
+  --type-brand: 1.25rem;
+  --type-body: 0.9375rem;
+  --type-supporting: 0.875rem;
+  --type-caption: 0.8125rem;
+  --type-micro: 0.75rem;
+}
+
 .post-layout {
   display: grid;
   grid-template-columns: 30% 70%;
@@ -25,7 +36,7 @@
   align-self: flex-start;
   gap: 0.55rem;
   margin: 28px 32px 0;
-  font-size: clamp(1.25rem, 1.7vw, 1.45rem);
+  font-size: var(--type-brand);
   font-weight: 700;
   line-height: 1;
   text-decoration: none;
@@ -45,7 +56,7 @@
   gap: 1rem;
   margin: 1.3rem 1.25rem 0.6rem 0.5rem;
   color: var(--ink-muted);
-  font-size: 0.82rem;
+  font-size: var(--type-caption);
   font-variant-numeric: tabular-nums;
 }
 
@@ -85,7 +96,7 @@
   gap: 0.2rem;
   padding: 0.38rem 0;
   color: var(--ink);
-  font-size: 1rem;
+  font-size: var(--type-body);
   font-weight: 600;
   line-height: 1.45;
   text-decoration: none;
@@ -95,7 +106,7 @@
 .sidebar-outline a::before {
   color: var(--ink-muted);
   content: attr(data-number);
-  font-size: 0.78rem;
+  font-size: var(--type-micro);
   font-variant-numeric: tabular-nums;
   line-height: 1.85;
 }
@@ -131,7 +142,7 @@
 .issue-heading h1 {
   margin: 0;
   color: var(--ink);
-  font-size: 2rem;
+  font-size: var(--type-page-title);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -139,7 +150,7 @@
 .issue-heading > p {
   margin: 0.45rem 0 0;
   color: var(--ink-muted);
-  font-size: 0.88rem;
+  font-size: var(--type-supporting);
   font-variant-numeric: tabular-nums;
 }
 
@@ -166,8 +177,8 @@
 .issue-caption {
   margin: 1.75rem 0 0;
   color: var(--ink-soft);
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: var(--type-body);
+  line-height: 1.75;
   text-align: center;
 }
 
@@ -181,8 +192,8 @@
 
 .issue-note p {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: var(--type-supporting);
+  line-height: 1.7;
 }
 
 .post-content {
@@ -198,9 +209,9 @@
   margin: 3.5rem 0 0.65rem;
   scroll-margin-top: 2rem;
   color: var(--ink);
-  font-size: 1.5rem;
+  font-size: var(--type-article-title);
   font-weight: 700;
-  line-height: 1.7;
+  line-height: 1.45;
 }
 
 .post-content > h2::before {
@@ -208,7 +219,7 @@
   margin-bottom: 0.05rem;
   color: var(--active);
   content: "第 " attr(data-number) " 篇";
-  font-size: 0.82rem;
+  font-size: var(--type-caption);
   font-weight: 600;
   line-height: 1.4;
 }
@@ -227,8 +238,13 @@
 .post-content > h2 + p {
   margin-top: -0.2rem;
   color: var(--ink-muted);
-  font-size: 0.95rem;
+  font-size: var(--type-supporting);
   line-height: 1.55;
+}
+
+.post-content .article-meta-row {
+  font-size: var(--type-body);
+  line-height: 1.6;
 }
 
 .post-content strong {
@@ -261,6 +277,21 @@
 
 .post-content .description-heading > strong {
   flex: 0 0 auto;
+}
+
+.post-content .content-heading {
+  font-size: var(--type-section-title);
+  line-height: 1.5;
+}
+
+.post-content .content-heading > strong {
+  font-weight: 750;
+  letter-spacing: 0.025em;
+}
+
+.post-content .content-detail {
+  font-size: var(--type-body);
+  line-height: 1.82;
 }
 
 .post-content .description-heading:has(.summary-provenance__details[open]) {
@@ -401,7 +432,7 @@
 }
 
 .post-content .hn-discussion-row {
-  margin: 1.35rem 0 0;
+  margin: 1.15rem 0 0;
 }
 
 .hn-discussion-label {
@@ -411,44 +442,45 @@
 .post-content a.hn-discussion-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  min-height: 40px;
-  padding: 0.45rem 0.7rem 0.45rem 0.5rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--control);
-  color: var(--ink-soft);
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.2;
+  gap: 0.42rem;
+  min-height: auto;
+  padding: 0.2rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: var(--type-caption);
+  font-weight: 550;
+  line-height: 1.4;
   text-decoration: none;
-  transition: background 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
+  transition: color 120ms ease-out;
 }
 
 .post-content a.hn-discussion-link::before {
-  display: grid;
-  min-width: 28px;
-  height: 24px;
-  padding: 0 0.3rem;
-  border-radius: 6px;
-  background: var(--active);
-  color: var(--canvas);
+  display: inline-block;
+  min-width: auto;
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--active);
   content: "HN";
-  font-size: 0.68rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  place-items: center;
+  letter-spacing: 0.06em;
 }
 
 .post-content a.hn-discussion-link::after {
-  color: var(--link);
+  color: var(--ink-muted);
   content: "↗";
+  font-size: 0.9em;
 }
 
 .post-content a.hn-discussion-link:hover {
-  border-color: var(--line-strong);
-  background: var(--paper-raised);
-  color: var(--ink);
-  text-decoration: none;
+  background: transparent;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
 }
 
 .post-content blockquote {
@@ -517,7 +549,7 @@
   padding-top: 1.25rem;
   border-top: 1px solid var(--line);
   color: var(--ink-muted);
-  font-size: 0.85rem;
+  font-size: var(--type-caption);
 }
 
 .post-footer a {
@@ -568,6 +600,11 @@
 }
 
 @media (max-width: 900px) {
+  .post-page {
+    --type-page-title: 1.75rem;
+    --type-article-title: 1.4375rem;
+  }
+
   .post-layout {
     display: block;
   }
@@ -593,7 +630,7 @@
     width: calc(100% - 4.75rem);
     min-width: 0;
     margin: 22px 20px 0;
-    font-size: 1.45rem;
+    font-size: var(--type-brand);
   }
 
   .sidebar-brand span {
@@ -678,14 +715,14 @@
   .current-position {
     flex: 0 0 auto;
     color: var(--active);
-    font-size: 0.72rem;
+    font-size: var(--type-micro);
     font-variant-numeric: tabular-nums;
   }
 
   .current-title {
     overflow: hidden;
     color: var(--ink);
-    font-size: 0.92rem;
+    font-size: var(--type-supporting);
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -702,7 +739,7 @@
     background: var(--control);
     color: var(--ink);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: var(--type-supporting);
     place-items: center;
   }
 
@@ -715,7 +752,7 @@
   }
 
   .issue-heading h1 {
-    font-size: 1.75rem;
+    font-size: var(--type-page-title);
   }
 
   .post-content > h2 {
@@ -724,13 +761,18 @@
 }
 
 @media (max-width: 640px) {
+  .post-page {
+    --type-page-title: 1.625rem;
+    --type-article-title: 1.375rem;
+  }
+
   .issue-caption {
     text-align: left;
   }
 
   .post-content > h2 {
     margin-top: 3rem;
-    font-size: 1.4rem;
+    font-size: var(--type-article-title);
   }
 
   .post-footer {

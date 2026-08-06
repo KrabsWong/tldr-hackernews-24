@@ -13,15 +13,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!outline || headings.length === 0) return;
 
-  document.querySelectorAll('.post-content a[href^="https://news.ycombinator.com/item?id="]').forEach((link) => {
+  document.querySelectorAll('.post-content > p > em > a[href^="https://news.ycombinator.com/item?id="]').forEach((link) => {
     const itemId = new URL(link.href).searchParams.get("id");
-    link.textContent = itemId ? `查看原始讨论 · #${itemId}` : "查看原始讨论";
+    link.textContent = itemId ? `讨论 · #${itemId}` : "讨论";
     link.classList.add("hn-discussion-link");
     link.setAttribute("aria-label", itemId
       ? `前往 Hacker News 查看原始讨论，条目 ${itemId}`
       : "前往 Hacker News 查看原始讨论");
     link.parentElement?.classList.add("hn-discussion-label");
     link.closest("p")?.classList.add("hn-discussion-row");
+  });
+
+  const articleMetaLabels = new Set(["发布时间", "链接"]);
+  document.querySelectorAll(".post-content > p").forEach((element) => {
+    const label = element.querySelector(":scope > strong")?.textContent
+      .replace(/[：:]/g, "")
+      .trim();
+    if (articleMetaLabels.has(label)) element.classList.add("article-meta-row");
+  });
+
+  const contentHeadingLabels = new Set(["描述", "评论要点"]);
+  const contentHeadings = Array.from(document.querySelectorAll(
+    ".post-content > p, .post-content > .description-heading",
+  )).filter((element) => {
+    const label = element.querySelector(":scope > strong")?.textContent
+      .replace(/[：:]/g, "")
+      .trim();
+    return contentHeadingLabels.has(label);
+  });
+
+  contentHeadings.forEach((heading) => heading.classList.add("content-heading"));
+  contentHeadings.forEach((heading) => {
+    let detail = heading.nextElementSibling;
+    while (detail
+      && !detail.matches("h2, hr, .content-heading, .hn-discussion-row")) {
+      detail.classList.add("content-detail");
+      detail = detail.nextElementSibling;
+    }
   });
 
   const sourceDisclosures = Array.from(document.querySelectorAll(".summary-provenance__details"));
