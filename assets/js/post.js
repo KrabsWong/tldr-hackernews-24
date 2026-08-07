@@ -24,12 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
     link.closest("p")?.classList.add("hn-discussion-row");
   });
 
-  const articleMetaLabels = new Set(["发布时间", "链接"]);
   document.querySelectorAll(".post-content > p").forEach((element) => {
     const label = element.querySelector(":scope > strong")?.textContent
       .replace(/[：:]/g, "")
       .trim();
-    if (articleMetaLabels.has(label)) element.classList.add("article-meta-row");
+    if (label === "发布时间") {
+      element.remove();
+      return;
+    }
+    if (label === "链接") element.classList.add("article-meta-row");
   });
 
   const contentHeadingLabels = new Set(["描述", "评论要点"]);
