@@ -139,7 +139,7 @@ function analytics(): string {
 }
 
 function documentHead(title: string, description: string, page: "home" | "post"): string {
-  const themeVersion = page === "home" ? 13 : 16;
+  const themeVersion = page === "home" ? 14 : 17;
   const componentVersion = page === "home" ? 17 : 33;
 
   return `  <head>
@@ -158,7 +158,7 @@ function documentHead(title: string, description: string, page: "home" | "post")
     <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin>
     <link rel="stylesheet" href="https://weekly.tw93.fun/fonts/jinkai.css">
     <link rel="stylesheet" href="/assets/css/theme.css?v=${themeVersion}">
-    <link rel="stylesheet" href="/assets/css/layout.css?v=13">
+    <link rel="stylesheet" href="/assets/css/layout.css?v=14">
     <link rel="stylesheet" href="/assets/css/components.css?v=${componentVersion}">
   </head>`;
 }
@@ -280,7 +280,7 @@ ${renderArchive(posts)}
         <strong>TL;DR HackerNews 24</strong>
         <span>每天少一点信息焦虑。</span>
       </div>
-      <p class="footer-credit">整套界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
+      <p class="footer-credit">由 <span class="creator-name">Krabs</span> 构建与维护 · 界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
     </footer>
 
 ${analytics()}
@@ -351,7 +351,7 @@ ${post.contentHtml.trimEnd()}
         <footer class="post-footer">
           <div>
             <span>发布于 ${displayDate}</span>
-            <p class="footer-credit">整套界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
+            <p class="footer-credit">由 <span class="creator-name">Krabs</span> 构建与维护 · 界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
           </div>
           <a href="/">返回首页</a>
         </footer>

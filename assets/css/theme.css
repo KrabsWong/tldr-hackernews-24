@@ -11,6 +11,7 @@
   --link: oklch(54% 0.19 246);
   --link-hover: oklch(47% 0.17 246);
   --active: oklch(51% 0.075 68);
+  --crab: oklch(56% 0.19 38);
   --control: oklch(96.5% 0.005 250);
   --focus: oklch(60% 0.16 244);
   --provenance-ink: oklch(39% 0.025 65);
@@ -35,6 +36,7 @@
     --link: oklch(72% 0.13 244);
     --link-hover: oklch(78% 0.11 244);
     --active: oklch(73% 0.08 72);
+    --crab: oklch(72% 0.15 42);
     --control: oklch(25% 0.009 250);
     --focus: oklch(74% 0.13 244);
     --provenance-ink: oklch(78% 0.025 76);

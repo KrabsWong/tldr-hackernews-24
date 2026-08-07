@@ -332,6 +332,11 @@ button:focus-visible {
   color: var(--ink-muted);
 }
 
+.creator-name {
+  color: var(--crab);
+  font-weight: 700;
+}
+
 .footer-credit a {
   color: var(--link);
   text-decoration: none;

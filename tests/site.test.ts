@@ -26,8 +26,12 @@ test("builds every post with the existing routes and unchanged assets", async ()
     assert.equal(new Set(posts.map((post) => post.url)).size, posts.length);
     assert.match(homepage, new RegExp(`href="${newestPost.url}"`));
     assert.match(homepage, new RegExp(`${posts.length} 期 Hacker News 中文简报`));
+    assert.match(homepage, /<span class="creator-name">Krabs<\/span> 构建与维护/);
+    assert.doesNotMatch(homepage, /href="https:\/\/github\.com\/KrabsWong"/);
     assert.match(postHtml, /class="post-layout"/);
     assert.match(postHtml, /src="\/assets\/js\/post\.js\?v=22"/);
+    assert.match(postHtml, /<span class="creator-name">Krabs<\/span> 构建与维护/);
+    assert.doesNotMatch(postHtml, /href="https:\/\/github\.com\/KrabsWong"/);
 
     for (const post of posts) {
       assert.equal(post.contentHtml.match(/<h2(?:\s|>)/g)?.length, post.headings.length);
