@@ -1,14 +1,10 @@
-# Jekyll
-_site/
-__pycache__/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-mock-preview
+# Generated output and dependencies
+dist/
+node_modules/
 
-# Bundler
-vendor/bundle/
-.bundle/
+# Legacy local preview artifacts
+_site/
+mock-preview/
 
 # Environment files
 .env
@@ -19,59 +15,19 @@ vendor/bundle/
 logs/
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE files
+# Editors and operating systems
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
+._*
 
-# Temporary files
+# Temporary and backup files
 *.tmp
 *.temp
-
-# Ruby
-*.gem
-*.rbc
-.bundle
-.config
-coverage/
-InstalledFiles
-lib/bundler/man/
-pkg/
-rdoc/
-spec/reports/
-tmp/
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-
-# Backup files
 *.bak
 *.backup
 *.old
