@@ -306,10 +306,9 @@ button:focus-visible {
 
 .site-footer {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.65rem 2rem;
+  gap: 2rem;
   width: min(calc(100% - 2rem), 660px);
   margin: 0 auto;
   padding: 1.5rem 0 2.5rem;
@@ -320,6 +319,7 @@ button:focus-visible {
 
 .footer-meta {
   display: flex;
+  flex: 0 0 auto;
   flex-direction: column;
   gap: 0.15rem;
 }
@@ -328,19 +328,30 @@ button:focus-visible {
   color: var(--ink-soft);
 }
 
+.footer-identity {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  white-space: nowrap;
+}
+
 .footer-credit {
   margin: 0;
   color: var(--ink-muted);
+  line-height: 1.65;
+}
+
+.site-footer > .footer-credit {
+  flex: 1;
+  text-align: right;
 }
 
 .footer-icp {
   margin: 0;
   color: var(--ink-muted);
-}
-
-.site-footer > .footer-icp {
-  flex: 0 0 100%;
-  text-align: center;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .creator-name {
@@ -420,10 +431,8 @@ button:focus-visible {
     gap: 0.35rem;
   }
 
-  .site-footer > .footer-icp {
-    align-self: stretch;
-    flex-basis: auto;
-    margin-top: 0.35rem;
+  .site-footer > .footer-credit {
+    text-align: left;
   }
 }
 

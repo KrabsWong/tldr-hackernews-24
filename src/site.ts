@@ -157,7 +157,7 @@ function documentHead(title: string, description: string, page: "home" | "post")
     <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin>
     <link rel="stylesheet" href="/assets/css/jinkai.css?v=1">
     <link rel="stylesheet" href="/assets/css/theme.css?v=${themeVersion}">
-    <link rel="stylesheet" href="/assets/css/layout.css?v=14">
+    <link rel="stylesheet" href="/assets/css/layout.css?v=15">
     <link rel="stylesheet" href="/assets/css/components.css?v=${componentVersion}">
   </head>`;
 }
@@ -276,11 +276,13 @@ ${renderArchive(posts)}
 
     <footer class="site-footer">
       <div class="footer-meta">
-        <strong>TL;DR HackerNews 24</strong>
-        <span>每天少一点信息焦虑。</span>
+        <div class="footer-identity">
+          <strong>TL;DR HackerNews 24</strong>
+          <span>每天少一点信息焦虑。</span>
+        </div>
+        <span class="footer-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">浙ICP备2022010856号-1</a></span>
       </div>
       <p class="footer-credit">由 <span class="creator-name">Krabs</span> 构建与维护 · 界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
-      <p class="footer-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">浙ICP备2022010856号-1</a></p>
     </footer>
 
 ${analytics()}
