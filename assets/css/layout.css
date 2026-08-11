@@ -306,9 +306,10 @@ button:focus-visible {
 
 .site-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 0.65rem 2rem;
   width: min(calc(100% - 2rem), 660px);
   margin: 0 auto;
   padding: 1.5rem 0 2.5rem;
@@ -332,17 +333,29 @@ button:focus-visible {
   color: var(--ink-muted);
 }
 
+.footer-icp {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.site-footer > .footer-icp {
+  flex: 0 0 100%;
+  text-align: center;
+}
+
 .creator-name {
   color: var(--crab);
   font-weight: 700;
 }
 
-.footer-credit a {
+.footer-credit a,
+.footer-icp a {
   color: var(--link);
   text-decoration: none;
 }
 
-.footer-credit a:hover {
+.footer-credit a:hover,
+.footer-icp a:hover {
   color: var(--link-hover);
   text-decoration: underline;
   text-underline-offset: 0.18em;
@@ -405,6 +418,12 @@ button:focus-visible {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.35rem;
+  }
+
+  .site-footer > .footer-icp {
+    align-self: stretch;
+    flex-basis: auto;
+    margin-top: 0.35rem;
   }
 }
 

@@ -280,6 +280,7 @@ ${renderArchive(posts)}
         <span>每天少一点信息焦虑。</span>
       </div>
       <p class="footer-credit">由 <span class="creator-name">Krabs</span> 构建与维护 · 界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
+      <p class="footer-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">浙ICP备2022010856号-1</a></p>
     </footer>
 
 ${analytics()}
@@ -351,6 +352,7 @@ ${post.contentHtml.trimEnd()}
           <div>
             <span>发布于 ${displayDate}</span>
             <p class="footer-credit">由 <span class="creator-name">Krabs</span> 构建与维护 · 界面参考并致敬 <a href="https://weekly.tw93.fun/" target="_blank" rel="noopener noreferrer">tw93 的「潮流周刊」</a></p>
+            <p class="footer-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">浙ICP备2022010856号-1</a></p>
           </div>
           <a href="/">返回首页</a>
         </footer>
