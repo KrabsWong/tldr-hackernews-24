@@ -154,9 +154,8 @@ function documentHead(title: string, description: string, page: "home" | "post")
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}">
 
-    <link rel="preconnect" href="https://weekly.tw93.fun">
     <link rel="preconnect" href="https://gw.alipayobjects.com" crossorigin>
-    <link rel="stylesheet" href="https://weekly.tw93.fun/fonts/jinkai.css">
+    <link rel="stylesheet" href="/assets/css/jinkai.css?v=1">
     <link rel="stylesheet" href="/assets/css/theme.css?v=${themeVersion}">
     <link rel="stylesheet" href="/assets/css/layout.css?v=14">
     <link rel="stylesheet" href="/assets/css/components.css?v=${componentVersion}">
