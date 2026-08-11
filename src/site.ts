@@ -1,4 +1,5 @@
-import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { copyFile, cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import matter from "gray-matter";
@@ -28,6 +29,7 @@ export interface Post {
   monthLabel: string;
   title: string;
   url: string;
+  contentHash: string;
   contentHtml: string;
   headings: string[];
 }
@@ -48,6 +50,7 @@ interface IssueSummary {
   date: string;
   title: string;
   url: string;
+  contentURL?: string;
   storyCount: number;
   headlines: string[];
 }
@@ -112,7 +115,8 @@ async function loadPost(postsDirectory: string, fileName: string): Promise<Post>
 
   const [, year, month, day] = match;
   const date = `${year}-${month}-${day}`;
-  const source = await readFile(path.join(postsDirectory, fileName), "utf8");
+  const sourceBytes = await readFile(path.join(postsDirectory, fileName));
+  const source = sourceBytes.toString("utf8");
   const parsed = matter(source);
   assertFrontMatterDate(parsed.data.date, date, fileName);
 
@@ -128,6 +132,7 @@ async function loadPost(postsDirectory: string, fileName: string): Promise<Post>
       ? parsed.data.title
       : `HackerNews Daily - ${date}`,
     url: `/${year}/${month}/${day}/daily/`,
+    contentHash: createHash("sha256").update(sourceBytes).digest("hex").slice(0, 12),
     contentHtml: markdown.renderer.render(tokens, markdown.options, {}),
     headings,
   };
@@ -153,6 +158,7 @@ function issueIndex(posts: Post[]): IssueIndex {
       date: post.date,
       title: post.title,
       url: `${SITE.origin}${post.url}`,
+      contentURL: `${SITE.origin}/api/v1/issues/${post.date}.md?v=${post.contentHash}`,
       storyCount: post.headings.length,
       headlines: post.headings,
     })),
@@ -414,6 +420,8 @@ export async function buildSite(rootDirectory: string, outputDirectory = path.jo
 
   const apiDirectory = path.join(outputDirectory, "api", "v1");
   await mkdir(apiDirectory, { recursive: true });
+  const issueContentDirectory = path.join(apiDirectory, "issues");
+  await mkdir(issueContentDirectory, { recursive: true });
   await writeFile(
     path.join(apiDirectory, "issues.json"),
     `${JSON.stringify(issueIndex(posts), null, 2)}\n`,
@@ -422,7 +430,13 @@ export async function buildSite(rootDirectory: string, outputDirectory = path.jo
   await Promise.all(posts.map(async (post) => {
     const postDirectory = path.join(outputDirectory, post.url);
     await mkdir(postDirectory, { recursive: true });
-    await writeFile(path.join(postDirectory, "index.html"), renderPost(post));
+    await Promise.all([
+      writeFile(path.join(postDirectory, "index.html"), renderPost(post)),
+      copyFile(
+        path.join(rootDirectory, "_posts", `${post.date}-daily.md`),
+        path.join(issueContentDirectory, `${post.date}.md`),
+      ),
+    ]);
   }));
 
   return { postCount: posts.length, latestDate: posts[0].date };

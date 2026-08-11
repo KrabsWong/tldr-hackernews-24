@@ -41,9 +41,20 @@ npm test
 
 ```text
 /api/v1/issues.json
+/api/v1/issues/YYYY-MM-DD.md
 ```
 
-索引包含每期日报的稳定 ID、日期、canonical URL、文章数和标题列表。它与 HTML 在同一次构建中生成，不需要 Pages Functions、数据库或运行时密钥。
+每篇 `_posts/YYYY-MM-DD-daily.md` 会按原始字节复制到对应的 Markdown 详情地址。索引包含每期日报的稳定 ID、日期、canonical HTML URL、文章数、标题列表，以及供原生阅读器按需加载的可选 `contentURL`：
+
+```json
+{
+  "id": "2026-08-10",
+  "url": "https://tldr-24.krabs.wang/2026/08/10/daily/",
+  "contentURL": "https://tldr-24.krabs.wang/api/v1/issues/2026-08-10.md?v=0123456789ab"
+}
+```
+
+`contentURL` 的 `v` 参数是原始 Markdown 的 SHA-256 摘要前 12 位；内容不变时 URL 稳定，内容变化时 URL 随之变化，便于客户端和 CDN 安全缓存。`url` 始终保留为分享和浏览器打开所用的 canonical HTML 地址。索引、Markdown 与 HTML 在同一次构建中生成，不需要 Pages Functions、数据库或运行时密钥。
 
 ## Cloudflare Pages
 

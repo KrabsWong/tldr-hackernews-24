@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -27,6 +28,7 @@ test("builds every post with the existing routes and unchanged assets", async ()
         date: string;
         title: string;
         url: string;
+        contentURL?: string;
         storyCount: number;
         headlines: string[];
       }>;
@@ -40,14 +42,6 @@ test("builds every post with the existing routes and unchanged assets", async ()
     assert.equal(issueIndex.schemaVersion, 1);
     assert.equal(issueIndex.latestDate, newestPost.date);
     assert.equal(issueIndex.issues.length, posts.length);
-    assert.deepEqual(issueIndex.issues[0], {
-      id: newestPost.date,
-      date: newestPost.date,
-      title: newestPost.title,
-      url: `https://tldr-24.krabs.wang${newestPost.url}`,
-      storyCount: newestPost.headings.length,
-      headlines: newestPost.headings,
-    });
     assert.equal(new Set(posts.map((post) => post.url)).size, posts.length);
     assert.match(homepage, new RegExp(`href="${newestPost.url}"`));
     assert.match(homepage, new RegExp(`${posts.length} 期 Hacker News 中文简报`));
@@ -60,9 +54,35 @@ test("builds every post with the existing routes and unchanged assets", async ()
     assert.match(postHtml, /href="https:\/\/beian\.miit\.gov\.cn\/"[^>]*>浙ICP备2022010856号-1<\/a>/);
     assert.doesNotMatch(postHtml, /href="https:\/\/github\.com\/KrabsWong"/);
 
-    for (const post of posts) {
+    for (const [index, post] of posts.entries()) {
       assert.equal(post.contentHtml.match(/<h2(?:\s|>)/g)?.length, post.headings.length);
       await assert.doesNotReject(readFile(path.join(outputDirectory, post.url, "index.html")));
+
+      const sourceMarkdown = await readFile(
+        path.join(rootDirectory, "_posts", `${post.date}-daily.md`),
+      );
+      const outputMarkdown = await readFile(
+        path.join(outputDirectory, "api", "v1", "issues", `${post.date}.md`),
+      );
+      const contentHash = createHash("sha256")
+        .update(sourceMarkdown)
+        .digest("hex")
+        .slice(0, 12);
+      const { contentURL, ...legacyFields } = issueIndex.issues[index];
+
+      assert.deepEqual(outputMarkdown, sourceMarkdown);
+      assert.equal(
+        contentURL,
+        `https://tldr-24.krabs.wang/api/v1/issues/${post.date}.md?v=${contentHash}`,
+      );
+      assert.deepEqual(legacyFields, {
+        id: post.date,
+        date: post.date,
+        title: post.title,
+        url: `https://tldr-24.krabs.wang${post.url}`,
+        storyCount: post.headings.length,
+        headlines: post.headings,
+      });
     }
 
     const sourceAssets = await readdir(path.join(rootDirectory, "assets"), { recursive: true });
