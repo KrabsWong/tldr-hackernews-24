@@ -17,12 +17,37 @@ test("builds every post with the existing routes and unchanged assets", async ()
     const posts = await loadPosts(rootDirectory);
     const result = await buildSite(rootDirectory, outputDirectory);
     const homepage = await readFile(path.join(outputDirectory, "index.html"), "utf8");
+    const issueIndex = JSON.parse(
+      await readFile(path.join(outputDirectory, "api", "v1", "issues.json"), "utf8"),
+    ) as {
+      schemaVersion: number;
+      latestDate: string;
+      issues: Array<{
+        id: string;
+        date: string;
+        title: string;
+        url: string;
+        storyCount: number;
+        headlines: string[];
+      }>;
+    };
     const newestPost = posts[0];
     const newestOutput = path.join(outputDirectory, newestPost.url, "index.html");
     const postHtml = await readFile(newestOutput, "utf8");
 
     assert.equal(result.postCount, posts.length);
     assert.equal(result.latestDate, newestPost.date);
+    assert.equal(issueIndex.schemaVersion, 1);
+    assert.equal(issueIndex.latestDate, newestPost.date);
+    assert.equal(issueIndex.issues.length, posts.length);
+    assert.deepEqual(issueIndex.issues[0], {
+      id: newestPost.date,
+      date: newestPost.date,
+      title: newestPost.title,
+      url: `https://tldr-24.krabs.wang${newestPost.url}`,
+      storyCount: newestPost.headings.length,
+      headlines: newestPost.headings,
+    });
     assert.equal(new Set(posts.map((post) => post.url)).size, posts.length);
     assert.match(homepage, new RegExp(`href="${newestPost.url}"`));
     assert.match(homepage, new RegExp(`${posts.length} 期 Hacker News 中文简报`));

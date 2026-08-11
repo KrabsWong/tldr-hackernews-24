@@ -37,6 +37,14 @@ npm test
 /YYYY/MM/DD/daily/
 ```
 
+构建同时生成供原生客户端消费的版本化静态索引：
+
+```text
+/api/v1/issues.json
+```
+
+索引包含每期日报的稳定 ID、日期、canonical URL、文章数和标题列表。它与 HTML 在同一次构建中生成，不需要 Pages Functions、数据库或运行时密钥。
+
 ## Cloudflare Pages
 
 在 Cloudflare Pages 连接此仓库，并设置：

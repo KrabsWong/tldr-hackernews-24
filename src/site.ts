@@ -6,6 +6,7 @@ import MarkdownIt from "markdown-it";
 import type Token from "markdown-it/lib/token.mjs";
 
 const SITE = {
+  origin: "https://tldr-24.krabs.wang",
   title: "TL;DR.HackerNews24",
   description: "Read it 1000 years later bro.",
   analyticsId: "G-NVV6SYBRDW",
@@ -34,6 +35,21 @@ export interface Post {
 export interface BuildResult {
   postCount: number;
   latestDate: string;
+}
+
+interface IssueIndex {
+  schemaVersion: 1;
+  latestDate: string;
+  issues: IssueSummary[];
+}
+
+interface IssueSummary {
+  id: string;
+  date: string;
+  title: string;
+  url: string;
+  storyCount: number;
+  headlines: string[];
 }
 
 function escapeHtml(value: string): string {
@@ -126,6 +142,21 @@ export async function loadPosts(rootDirectory: string): Promise<Post[]> {
 
   const posts = await Promise.all(fileNames.map((fileName) => loadPost(postsDirectory, fileName)));
   return posts.sort((left, right) => right.date.localeCompare(left.date));
+}
+
+function issueIndex(posts: Post[]): IssueIndex {
+  return {
+    schemaVersion: 1,
+    latestDate: posts[0].date,
+    issues: posts.map((post) => ({
+      id: post.date,
+      date: post.date,
+      title: post.title,
+      url: `${SITE.origin}${post.url}`,
+      storyCount: post.headings.length,
+      headlines: post.headings,
+    })),
+  };
 }
 
 function analytics(): string {
@@ -380,6 +411,13 @@ export async function buildSite(rootDirectory: string, outputDirectory = path.jo
   await mkdir(outputDirectory, { recursive: true });
   await cp(path.join(rootDirectory, "assets"), path.join(outputDirectory, "assets"), { recursive: true });
   await writeFile(path.join(outputDirectory, "index.html"), renderHome(posts));
+
+  const apiDirectory = path.join(outputDirectory, "api", "v1");
+  await mkdir(apiDirectory, { recursive: true });
+  await writeFile(
+    path.join(apiDirectory, "issues.json"),
+    `${JSON.stringify(issueIndex(posts), null, 2)}\n`,
+  );
 
   await Promise.all(posts.map(async (post) => {
     const postDirectory = path.join(outputDirectory, post.url);
